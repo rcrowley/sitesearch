@@ -11,7 +11,7 @@ func TestIndex(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	idx.Index("../html/test.html", "cool")
+	idx.Index("test.html", "cool")
 
 	testSearch(t, idx)
 }
@@ -20,11 +20,11 @@ func TestIndexHTML(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	n, err := html.ParseFile("../html/test.html")
+	n, err := html.ParseFile("test.html")
 	if err != nil {
 		t.Fatal(err)
 	}
-	idx.IndexHTML("../html/test.html", n)
+	idx.IndexHTML("test.html", n)
 
 	testSearch(t, idx)
 }
@@ -53,7 +53,7 @@ func TestIndexHTMLFile(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	if err := idx.IndexHTMLFile("../html/test.html"); err != nil {
+	if err := idx.IndexHTMLFile("test.html"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -64,7 +64,7 @@ func TestIndexHTMLFiles(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	if err := idx.IndexHTMLFiles([]string{"../html/test.html"}); err != nil {
+	if err := idx.IndexHTMLFiles([]string{"test.html"}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -96,7 +96,7 @@ func testSearch(t *testing.T, idx *Index) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Hits[0].ID != "../html/test.html" {
+	if result.Hits[0].ID != "test.html" {
 		t.Fatal(result)
 	}
 	//t.Log(result)
