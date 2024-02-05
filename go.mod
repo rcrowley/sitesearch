@@ -4,6 +4,7 @@ go 1.21.5
 
 require (
 	github.com/RoaringBitmap/roaring v1.2.3 // indirect
+	github.com/aws/aws-lambda-go v1.46.0 // indirect
 	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/blevesearch/bleve/v2 v2.3.10 // indirect
 	github.com/blevesearch/bleve_index_api v1.0.6 // indirect

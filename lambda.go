@@ -2,8 +2,16 @@
 
 package main
 
-import "log"
+import (
+	"log"
+
+	"github.com/aws/aws-lambda-go/lambda"
+)
+
+func init() {
+	log.SetFlags(log.Lshortfile)
+}
 
 func main() {
-	log.Print("main")
+	lambda.Start(SearchHandler)
 }
