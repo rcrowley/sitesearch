@@ -2,6 +2,7 @@ package main
 
 import (
 	"archive/zip"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -10,19 +11,21 @@ import (
 )
 
 func TestZip(t *testing.T) {
+	const idxFilename = "sitesearch.idx"
 
 	// Known-good sitesearch.idx to add to the zip file.
-	must(os.RemoveAll("sitesearch.idx"))
-	idx := must2(index.Open("sitesearch.idx"))
+	must(os.RemoveAll(idxFilename))
+	idx := must2(index.Open(idxFilename))
 	must(idx.Close())
-	defer os.RemoveAll("sitesearch.idx")
+	defer os.RemoveAll(idxFilename)
 
-	if err := Zip("sitesearch.idx"); err != nil {
+	zipFilename, err := Zip(idxFilename)
+	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove("sitesearch.zip")
+	defer os.Remove(zipFilename)
 
-	r, err := zip.OpenReader("sitesearch.zip")
+	r, err := zip.OpenReader(zipFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,32 +37,32 @@ func TestZip(t *testing.T) {
 		case "bootstrap":
 			count++
 			if fi.Size() < 1000000 {
-				t.Fatalf("%s is suspiciously small (%d bytes)", fi.Name(), fi.Size())
+				t.Fatalf("%s is suspiciously small (%d bytes)", f.Name, fi.Size())
 			}
-		case "sitesearch.idx/":
+		case fmt.Sprintf("%s/", idxFilename):
 			count++
-		case "sitesearch.idx/index_meta.json":
+		case fmt.Sprintf("%s/index_meta.json", idxFilename):
 			count++
 			if fi.Size() != 42 {
-				t.Fatalf("%s should contain 42 bytes but contains %d bytes", fi.Name(), fi.Size())
+				t.Fatalf("%s should contain 42 bytes but contains %d bytes", f.Name, fi.Size())
 			}
-		case "sitesearch.idx/store/":
+		case fmt.Sprintf("%s/store/", idxFilename):
 			count++
-		case "sitesearch.idx/store/root.bolt":
+		case fmt.Sprintf("%s/store/root.bolt", idxFilename):
 			count++
 			if fi.Size() != 65536 {
-				t.Fatalf("%s should contain 65536 bytes but contains %d bytes", fi.Name(), fi.Size())
+				t.Fatalf("%s should contain 65536 bytes but contains %d bytes", f.Name, fi.Size())
 			}
 		default:
-			t.Fatal(fi.Name())
+			t.Fatal(f.Name)
 		}
 	}
 	if count != 5 {
-		t.Fatalf("only found %d out of the expected 5 files in sitesearch.zip", count)
+		t.Fatalf("only found %d out of the expected 5 files in %s", count, zipFilename)
 	}
 
 	/*
-		stdout, err := exec.Command("unzip", "-l", "sitesearch.zip").Output()
+		stdout, err := exec.Command("unzip", "-l", zipFilename).Output()
 		if err != nil {
 			t.Fatal(err)
 		}

@@ -12,28 +12,29 @@ import (
 // Zip writes the starting-point zip file that contains the compiled Lambda
 // function, named bootstrap per the Lambda provided.al2 runtime requirement,
 // to disk, and adds the file with the given relative pathname to it.
-func Zip(pathname string) error {
+func Zip(pathname string) (string, error) {
+	const zipFilename = "sitesearch.zip"
 
-	f, err := os.Create("sitesearch.zip")
+	f, err := os.Create(zipFilename)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if _, err := f.Write(bootstrapZip); err != nil {
 		if err2 := f.Close(); err2 != nil {
-			return fmt.Errorf("%w %w", err, err2)
+			return "", fmt.Errorf("%w %w", err, err2)
 		}
-		return err
+		return "", err
 	}
 	if err := f.Close(); err != nil {
-		return err
+		return "", err
 	}
 
-	cmd := exec.Command("zip", "-X", "-r", "sitesearch.zip", pathname)
+	cmd := exec.Command("zip", "-X", "-r", zipFilename, pathname)
 	if err := cmd.Run(); err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return zipFilename, nil
 }
 
 //go:generate env GOARCH=arm64 GOOS=linux go build -o bootstrap -tags lambda
