@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rcrowley/sitesearch/html"
+	"github.com/rcrowley/mergician/html"
 	"github.com/rcrowley/sitesearch/index"
 )
 

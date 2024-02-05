@@ -2,7 +2,7 @@ package index
 
 import (
 	"github.com/blevesearch/bleve/v2"
-	"github.com/rcrowley/sitesearch/html"
+	"github.com/rcrowley/mergician/html"
 )
 
 type (

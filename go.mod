@@ -27,6 +27,8 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/json-iterator/go v0.0.0-20171115153421-f7279a603ede // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
+	github.com/rcrowley/mergician v0.0.0-20240205221335-17c9ce804185 // indirect
+	github.com/yuin/goldmark v1.6.0 // indirect
 	go.etcd.io/bbolt v1.3.7 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect

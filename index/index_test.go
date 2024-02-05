@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/rcrowley/sitesearch/html"
+	"github.com/rcrowley/mergician/html"
 )
 
 func TestIndex(t *testing.T) {

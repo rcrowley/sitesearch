@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/rcrowley/sitesearch/html"
+	"github.com/rcrowley/mergician/html"
 	"github.com/rcrowley/sitesearch/index"
 	"golang.org/x/net/html/atom"
 )
