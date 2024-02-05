@@ -16,26 +16,25 @@ func init() {
 }
 
 func main() {
-	//output := flag.String("o", "-", "write to this file instead of standard output")
-	// TODO -n Lambda function name, no -o (?), -r AWS region
+	// TODO -n Lambda function name, -r AWS region
+	tmpl := flag.String("t", "", "HTML template for search result pages")
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, `Usage: sitesearch [-o <output>] <input>[...]
-  -o <output>   write to this file instead of standard output
-  <input>[...]  pathname to one or more input HTML or Markdown files
+		fmt.Fprint(os.Stderr, `Usage: sitesearch -t <template> <input>[...]
+  -t <template>  HTML template for search result pages
+  <input>[...]   pathname to one or more input HTML or Markdown files
 `)
 	}
 	flag.Parse()
+	if *tmpl == "" {
+		log.Fatal("-t <template> is required")
+	}
 
-	const idxFilename = "sitesearch.idx"
-
-	idx := must2(index.Open(idxFilename))
+	idx := must2(index.Open(IdxFilename))
 	defer idx.Close()
 
 	must(idx.IndexHTMLFiles(flag.Args()))
 
-	zipFilename := must2(Zip(idxFilename))
-
-	log.Print(zipFilename) // TODO upload zipFilename to Lambda and set a function URL
+	must(Zip(ZipFilename, IdxFilename, *tmpl))
 
 }
 

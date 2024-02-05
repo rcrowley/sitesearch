@@ -5,27 +5,26 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"testing"
 
 	"github.com/rcrowley/sitesearch/index"
 )
 
 func TestZip(t *testing.T) {
-	const idxFilename = "sitesearch.idx"
 
 	// Known-good sitesearch.idx to add to the zip file.
-	must(os.RemoveAll(idxFilename))
-	idx := must2(index.Open(idxFilename))
+	must(os.RemoveAll(IdxFilename))
+	idx := must2(index.Open(IdxFilename))
 	must(idx.Close())
-	defer os.RemoveAll(idxFilename)
+	defer os.RemoveAll(IdxFilename)
 
-	zipFilename, err := Zip(idxFilename)
-	if err != nil {
+	if err := Zip(ZipFilename, IdxFilename, "index/test.html"); err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(zipFilename)
+	defer os.Remove(ZipFilename)
 
-	r, err := zip.OpenReader(zipFilename)
+	r, err := zip.OpenReader(ZipFilename)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,34 +38,33 @@ func TestZip(t *testing.T) {
 			if fi.Size() < 1000000 {
 				t.Fatalf("%s is suspiciously small (%d bytes)", f.Name, fi.Size())
 			}
-		case fmt.Sprintf("%s/", idxFilename):
+		case fmt.Sprintf("%s/", IdxFilename):
 			count++
-		case fmt.Sprintf("%s/index_meta.json", idxFilename):
+		case fmt.Sprintf("%s/index_meta.json", IdxFilename):
 			count++
 			if fi.Size() != 42 {
 				t.Fatalf("%s should contain 42 bytes but contains %d bytes", f.Name, fi.Size())
 			}
-		case fmt.Sprintf("%s/store/", idxFilename):
+		case fmt.Sprintf("%s/store/", IdxFilename):
 			count++
-		case fmt.Sprintf("%s/store/root.bolt", idxFilename):
+		case fmt.Sprintf("%s/store/root.bolt", IdxFilename):
 			count++
 			if fi.Size() != 65536 {
 				t.Fatalf("%s should contain 65536 bytes but contains %d bytes", f.Name, fi.Size())
 			}
+		case fmt.Sprintf("%s", TmplFilename):
+			count++
 		default:
 			t.Fatal(f.Name)
 		}
 	}
-	if count != 5 {
-		t.Fatalf("only found %d out of the expected 5 files in %s", count, zipFilename)
-	}
-
-	/*
-		stdout, err := exec.Command("unzip", "-l", zipFilename).Output()
+	if count != 6 {
+		stdout, err := exec.Command("unzip", "-l", ZipFilename).Output()
 		if err != nil {
 			t.Fatal(err)
 		}
 		os.Stdout.Write(stdout)
-	*/
+		t.Fatalf("only found %d out of the expected 6 files in %s", count, ZipFilename)
+	}
 
 }
