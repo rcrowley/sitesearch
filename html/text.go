@@ -1,6 +1,7 @@
 package html
 
 import (
+	"encoding/json"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -26,4 +27,12 @@ func Text(in *Node) (out TextNode) {
 		out.Text = in.Data
 	}
 	return
+}
+
+func (n TextNode) String() string {
+	b, err := json.MarshalIndent(n, "", "\t")
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
 }
