@@ -15,10 +15,16 @@ type (
 )
 
 func Open(pathname string) (*Index, error) {
-	mapping := bleve.NewIndexMapping()
-	idx, err := bleve.New(pathname, mapping)
+	idx, err := bleve.Open(pathname)
 	if err != nil {
-		return nil, err
+		if err != bleve.ErrorIndexPathDoesNotExist {
+			return nil, err
+		}
+		mapping := bleve.NewIndexMapping()
+		idx, err = bleve.New(pathname, mapping)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &Index{idx}, nil
 }
