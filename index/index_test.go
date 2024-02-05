@@ -29,6 +29,26 @@ func TestIndexHTML(t *testing.T) {
 	testSearch(t, idx)
 }
 
+// TestIndexGoFile shows that this will work just fine, albeit the entire
+// contents of the file will end up being one bit TextNode.
+func TestIndexGoFile(t *testing.T) {
+	idx := setup(t)
+	defer teardown(t, idx)
+
+	if err := idx.IndexHTMLFile("index_test.go"); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := idx.Search("cool")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Hits[0].ID != "index_test.go" {
+		t.Fatal(result)
+	}
+	//t.Log(result)
+}
+
 func TestIndexHTMLFile(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
