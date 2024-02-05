@@ -30,7 +30,7 @@ func TestIndexHTML(t *testing.T) {
 }
 
 // TestIndexGoFile shows that this will work just fine, albeit the entire
-// contents of the file will end up being one bit TextNode.
+// contents of the file will end up being one big TextOnlyNode.
 func TestIndexGoFile(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
