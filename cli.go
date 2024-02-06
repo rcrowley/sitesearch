@@ -41,8 +41,8 @@ func main() {
 	// function is eventually going to look for it.
 	// TODO also read pathnames from standard input
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
-	defer idx.Close()
 	must(idx.IndexHTMLFiles(flag.Args()))
+	must(idx.Close())
 
 	// Copy the search engine result page template to where the Lambda function
 	// is eventually going to look for it.
