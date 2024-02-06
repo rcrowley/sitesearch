@@ -36,6 +36,9 @@ func Zip(
 		return err
 	}
 
+	// If you ever need to debug zip(1), add these options:
+	// "-la", "-lf", "/tmp/zip.log", "-li"
+
 	if err := exec.Command("zip", "-X", "-r", zipPathname, idxPathname).Run(); err != nil {
 		return err
 	}
