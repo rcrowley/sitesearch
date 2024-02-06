@@ -3,12 +3,16 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/rcrowley/sitesearch/index"
 )
 
@@ -17,10 +21,13 @@ func init() {
 }
 
 func main() {
-	// TODO -n Lambda function name, -r AWS region
+	name := flag.String("n", "sitesearch", "name of the the Lambda function")
+	region := flag.String("r", "", "AWS region to host the Lambda function")
 	tmpl := flag.String("t", "", "HTML template for search result pages")
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, `Usage: sitesearch -t <template> <input>[...]
+		fmt.Fprint(os.Stderr, `Usage: sitesearch [-n <name>] [-r <region>] -t <template> <input>[...]
+  -n <name>      name of the the Lambda function (default "sitesearch")
+  -r <region>    AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
   -t <template>  HTML template for search result pages
   <input>[...]   pathname to one or more input HTML or Markdown files
 `)
@@ -35,7 +42,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer os.RemoveAll(tmp)
-	log.Print(tmp)
 
 	// Index all the HTML we've been told to. Store the index where the Lambda
 	// function is eventually going to look for it.
@@ -53,10 +59,26 @@ func main() {
 	))
 
 	// Package up the application, index, and template for service in Lambda.
-	oldpwd := must(os.Getwd())
+	oldpwd := must2(os.Getwd())
 	must(os.Chdir(tmp))
 	must(Zip(ZipFilename, IdxFilename, TmplFilename))
 	must(os.Chdir(oldpwd))
+
+	// Find (and update) or create a Lambda function to serve this search
+	// application. Use whatever AWS credentials we find lying around and the
+	// region either found in the environment or given as an option.
+	log.Println(*name, *region)
+	ctx := context.Background()
+	var options []func(*config.LoadOptions) error
+	if *region != "" {
+		options = append(options, config.WithRegion(*region))
+	}
+	cfg := must2(config.LoadDefaultConfig(ctx, options...))
+	client := lambda.NewFromConfig(cfg)
+	log.Print(string(must2(json.MarshalIndent(must2(client.ListFunctions(ctx, &lambda.ListFunctionsInput{})), "", "\t"))))
+	log.Print(string(must2(json.MarshalIndent(must2(client.GetFunction(ctx, &lambda.GetFunctionInput{
+		FunctionName: name,
+	})), "", "\t"))))
 
 }
 
