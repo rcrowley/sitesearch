@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/rcrowley/mergician/html"
@@ -35,5 +37,14 @@ func Search(q string) (*html.Node, error) {
 }
 
 func SearchHandler(ctx context.Context, req events.LambdaFunctionURLRequest) (resp events.LambdaFunctionURLResponse, err error) {
-	panic("not implemented")
+	resp.StatusCode = http.StatusOK
+	resp.Headers = make(map[string]string)
+	resp.Headers["Content-Type"] = "application/json" // XXX "text/html; charset=utf-8"
+	b, err := json.MarshalIndent(req, "", "\t")
+	if err == nil {
+		resp.Body = string(b)
+	} else {
+		resp.Body = err.Error()
+	}
+	return
 }

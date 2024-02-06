@@ -4,7 +4,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -119,11 +118,38 @@ func main() {
 	} else if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Print(string(must2(json.MarshalIndent(must2(client.GetFunction(ctx, &lambda.GetFunctionInput{
-		FunctionName: name,
-	})), "", "\t"))))
-
+	must2(client.AddPermission(
+		ctx,
+		&lambda.AddPermissionInput{
+			Action:              aws.String("lambda:InvokeFunctionUrl"),
+			FunctionName:        name,
+			FunctionUrlAuthType: types.FunctionUrlAuthTypeNone,
+			Principal:           aws.String("*"),
+			StatementId:         aws.String("sitesearch"),
+		},
+	))
+	out, err := client.CreateFunctionUrlConfig(
+		ctx,
+		&lambda.CreateFunctionUrlConfigInput{
+			AuthType:     types.FunctionUrlAuthTypeNone,
+			FunctionName: name,
+		},
+	)
+	var functionURL string
+	if err == nil {
+		functionURL = aws.ToString(out.FunctionUrl)
+	} else if awsErrorCodeIs(err, "ResourceConflictException") {
+		out := must2(client.GetFunctionUrlConfig(
+			ctx,
+			&lambda.GetFunctionUrlConfigInput{
+				FunctionName: name,
+			},
+		))
+		functionURL = aws.ToString(out.FunctionUrl)
+	} else {
+		log.Fatal(err)
+	}
+	fmt.Println(functionURL)
 }
 
 func must(err error) {

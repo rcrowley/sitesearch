@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
@@ -29,7 +28,6 @@ func iamRole(ctx context.Context, cfg aws.Config, name string) (string, error) {
 		}},
 	})
 	if awsErrorCodeIs(err, "EntityAlreadyExists") {
-		log.Print(err) // XXX
 		out, err := client.GetRole(ctx, &iam.GetRoleInput{
 			RoleName: aws.String(name),
 		})
