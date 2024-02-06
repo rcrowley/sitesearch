@@ -5,7 +5,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -16,27 +15,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
-	"github.com/aws/smithy-go"
 	"github.com/rcrowley/sitesearch/index"
 )
 
 const (
-	handler       = "bootstrap"                                // meet the provided.al* API
+	handler       = "bootstrap" // meet the provided.al* API
 	runtime       = types.RuntimeProvidedal2023
 	timeout int32 = 29 // seconds
 )
-
-func awsErrorCode(err error) string {
-	var ae smithy.APIError
-	if errors.As(err, &ae) {
-		return ae.ErrorCode()
-	}
-	return ""
-}
-
-func awsErrorCodeIs(err error, code string) bool {
-	return awsErrorCode(err) == code
-}
 
 func init() {
 	log.SetFlags(0)
@@ -95,6 +81,7 @@ func main() {
 		options = append(options, config.WithRegion(*region))
 	}
 	cfg := must2(config.LoadDefaultConfig(ctx, options...))
+	roleARN := must2(iamRole(ctx, cfg, "sitesearch"))
 	client := lambda.NewFromConfig(cfg)
 	_, err = client.CreateFunction(ctx, &lambda.CreateFunctionInput{
 		Architectures: []types.Architecture{types.ArchitectureArm64},
