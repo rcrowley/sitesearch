@@ -19,10 +19,14 @@ func TestZip(t *testing.T) {
 	must(idx.Close())
 	defer os.RemoveAll(IdxFilename)
 
-	if err := Zip(ZipFilename, IdxFilename, "index/test.html"); err != nil {
+	zipFile, err := Zip(ZipFilename, IdxFilename, "index/test.html")
+	if err != nil {
 		t.Fatal(err)
 	}
 	defer os.Remove(ZipFilename)
+	if len(zipFile) < 1000000 {
+		t.Fatalf("zipFile is suspiciously small (%d bytes)", len(zipFile))
+	}
 
 	r, err := zip.OpenReader(ZipFilename)
 	if err != nil {

@@ -20,34 +20,34 @@ const (
 func Zip(
 	zipPathname string, // output
 	idxPathname, tmplPathname string, // input
-) error {
+) ([]byte, error) {
 
 	f, err := os.Create(zipPathname)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if _, err := f.Write(bootstrapZip); err != nil {
 		if err2 := f.Close(); err2 != nil {
-			return fmt.Errorf("%w %w", err, err2)
+			return nil, fmt.Errorf("%w %w", err, err2)
 		}
-		return err
+		return nil, err
 	}
 	if err := f.Close(); err != nil {
-		return err
+		return nil, err
 	}
 
 	// If you ever need to debug zip(1), add these options:
 	// "-la", "-lf", "/tmp/zip.log", "-li"
 
 	if err := exec.Command("zip", "-X", "-r", zipPathname, idxPathname).Run(); err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := exec.Command("zip", "-X", "-j", zipPathname, tmplPathname).Run(); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return os.ReadFile(zipPathname)
 }
 
 //go:generate env GOARCH=arm64 GOOS=linux go build -o bootstrap -tags lambda
