@@ -52,7 +52,7 @@ func TestZip(t *testing.T) {
 			if fi.Size() != 65536 {
 				t.Fatalf("%s should contain 65536 bytes but contains %d bytes", f.Name, fi.Size())
 			}
-		case fmt.Sprintf("%s", TmplFilename):
+		case fmt.Sprintf("%s", "test.html"): // not "index/test.html", because `zip -j`
 			count++
 		default:
 			t.Fatal(f.Name)

@@ -40,7 +40,7 @@ func Zip(
 		return err
 	}
 
-	if err := exec.Command("zip", "-X", zipPathname, tmplPathname).Run(); err != nil { // TODO put tmplPathname at TmplFilename (sitesearch.html)
+	if err := exec.Command("zip", "-X", "-j", zipPathname, tmplPathname).Run(); err != nil {
 		return err
 	}
 
