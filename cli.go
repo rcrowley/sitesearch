@@ -118,7 +118,7 @@ func main() {
 	} else if err != nil {
 		log.Fatal(err)
 	}
-	must2(client.AddPermission(
+	if _, err := client.AddPermission(
 		ctx,
 		&lambda.AddPermissionInput{
 			Action:              aws.String("lambda:InvokeFunctionUrl"),
@@ -127,7 +127,9 @@ func main() {
 			Principal:           aws.String("*"),
 			StatementId:         aws.String("sitesearch"),
 		},
-	))
+	); err != nil && !awsErrorCodeIs(err, "ResourceConflictException") {
+		log.Fatal(err)
+	}
 	out, err := client.CreateFunctionUrlConfig(
 		ctx,
 		&lambda.CreateFunctionUrlConfigInput{
