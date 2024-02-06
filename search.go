@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -12,11 +11,14 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-const IdxFilename = "sitesearch.idx"
+const (
+	IdxFilename  = "sitesearch.idx"
+	TmplFilename = "sitesearch.html"
+)
 
 func Search(q string) (*html.Node, error) {
 
-	idx, err := index.Open(IdxFilename)
+	idx, err := index.OpenReadOnly(IdxFilename)
 	if err != nil {
 		return nil, err
 	}
@@ -39,10 +41,9 @@ func Search(q string) (*html.Node, error) {
 func SearchHandler(ctx context.Context, req events.LambdaFunctionURLRequest) (resp events.LambdaFunctionURLResponse, err error) {
 	resp.StatusCode = http.StatusOK
 	resp.Headers = make(map[string]string)
-	resp.Headers["Content-Type"] = "application/json" // XXX "text/html; charset=utf-8"
-	b, err := json.MarshalIndent(req, "", "\t")
-	if err == nil {
-		resp.Body = string(b)
+	resp.Headers["Content-Type"] = "text/html; charset=utf-8"
+	if n, err := Search(req.QueryStringParameters["q"]); err == nil {
+		resp.Body = html.String(n) // TODO merge this into TmplFilename
 	} else {
 		resp.Body = err.Error()
 	}

@@ -29,6 +29,16 @@ func Open(pathname string) (*Index, error) {
 	return &Index{idx}, nil
 }
 
+func OpenReadOnly(pathname string) (*Index, error) {
+	idx, err := bleve.OpenUsing(pathname, map[string]interface{}{
+		"read_only": true,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &Index{idx}, nil
+}
+
 func (idx *Index) Close() error {
 	return idx.idx.Close()
 }

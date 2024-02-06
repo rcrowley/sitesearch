@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	TmplFilename = "sitesearch.html" // relative pathname within the zip file only
-	ZipFilename  = "sitesearch.zip"
+	ZipFilename = "sitesearch.zip"
 )
 
 // Zip writes the starting-point zip file that contains the compiled Lambda
