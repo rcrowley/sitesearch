@@ -47,6 +47,8 @@ require (
 	github.com/rcrowley/mergician v0.0.0-20240207030905-58fc643ea5b8 // indirect
 	github.com/yuin/goldmark v1.7.0 // indirect
 	go.etcd.io/bbolt v1.3.7 // indirect
+	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/term v0.16.0 // indirect
 )

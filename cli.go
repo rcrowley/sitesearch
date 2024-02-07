@@ -3,6 +3,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
@@ -15,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 	"github.com/rcrowley/sitesearch/index"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 const (
@@ -36,7 +38,7 @@ func main() {
   -n <name>      name of the the Lambda function (default "sitesearch")
   -r <region>    AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
   -t <template>  HTML template for search result pages
-  <input>[...]   pathname to one or more input HTML or Markdown files
+  <input>[...]   pathname to one or more input HTML or Markdown files, given as command-line arguments or on standard input
 `)
 	}
 	flag.Parse()
@@ -52,9 +54,15 @@ func main() {
 
 	// Index all the HTML we've been told to. Store the index where the Lambda
 	// function is eventually going to look for it.
-	// TODO also read pathnames from standard input
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
 	must(idx.IndexHTMLFiles(flag.Args()))
+	if !terminal.IsTerminal(0) {
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			must(idx.IndexHTMLFile(scanner.Text()))
+		}
+		must(scanner.Err())
+	}
 	must(idx.Close())
 
 	// Copy the search engine result page template to where the Lambda function
