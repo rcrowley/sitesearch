@@ -26,25 +26,40 @@ func Search(q string) (*html.Node, error) {
 
 	result, err := idx.Search(q)
 
-	n := &html.Node{
+	body := &html.Node{
+		DataAtom: atom.Body,
+		Data:     "body",
+		Type:     html.ElementNode,
+	}
+	pre := &html.Node{
 		DataAtom: atom.Pre,
 		Data:     "pre",
 		Type:     html.ElementNode,
 	}
-	n.AppendChild(&html.Node{
+	body.AppendChild(pre)
+	pre.AppendChild(&html.Node{
 		Data: fmt.Sprint(result),
 		Type: html.TextNode,
 	})
-	return n, nil
+	return body, nil
 }
 
 func SearchHandler(ctx context.Context, req events.LambdaFunctionURLRequest) (resp events.LambdaFunctionURLResponse, err error) {
-	resp.StatusCode = http.StatusOK
 	resp.Headers = make(map[string]string)
-	resp.Headers["Content-Type"] = "text/html; charset=utf-8"
-	if n, err := Search(req.QueryStringParameters["q"]); err == nil {
-		resp.Body = html.String(n) // TODO merge this into TmplFilename
+	var n *html.Node
+	if n, err = Search(req.QueryStringParameters["q"]); err == nil {
+		var tmpl *html.Node
+		if tmpl, err = html.ParseFile(TmplFilename); err == nil {
+			if n, err = html.Merge([]*html.Node{tmpl, n}, html.DefaultRules()); err != nil {
+				return
+			}
+		}
+		resp.StatusCode = http.StatusOK
+		resp.Headers["Content-Type"] = "text/html; charset=utf-8"
+		resp.Body = html.String(n)
 	} else {
+		resp.StatusCode = http.StatusInternalServerError
+		resp.Headers["Content-Type"] = "text/plain; charset=utf-8"
 		resp.Body = err.Error()
 	}
 	return
