@@ -54,6 +54,7 @@ func main() {
 
 	// Index all the HTML we've been told to. Store the index where the Lambda
 	// function is eventually going to look for it.
+	log.Printf("indexing HTML documents")
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
 	must(idx.IndexHTMLFiles(flag.Args()))
 	if !terminal.IsTerminal(0) {
@@ -74,6 +75,7 @@ func main() {
 	))
 
 	// Package up the application, index, and template for service in Lambda.
+	log.Printf("packaging the search application")
 	oldpwd := must2(os.Getwd())
 	must(os.Chdir(tmp))
 	zipFile := must2(Zip(ZipFilename, IdxFilename, TmplFilename))
@@ -88,7 +90,9 @@ func main() {
 		options = append(options, config.WithRegion(*region))
 	}
 	cfg := must2(config.LoadDefaultConfig(ctx, options...))
+	log.Printf("creating or updating the IAM role")
 	roleARN := must2(iamRole(ctx, cfg, "sitesearch"))
+	log.Printf("creating or updating the Lambda function")
 	client := lambda.NewFromConfig(cfg)
 	_, err = client.CreateFunction(ctx, &lambda.CreateFunctionInput{
 		Architectures: []types.Architecture{types.ArchitectureArm64},
@@ -126,6 +130,7 @@ func main() {
 	} else if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("publishing the Lambda function URL")
 	if _, err := client.AddPermission(
 		ctx,
 		&lambda.AddPermissionInput{
