@@ -8,6 +8,11 @@ import (
 	"github.com/rcrowley/mergician/html"
 )
 
+const (
+	Title   = "Title"
+	Summary = "Summary"
+)
+
 type (
 	Index struct {
 		idx bleve.Index
@@ -23,8 +28,10 @@ func Open(pathname string) (*Index, error) {
 		if err != bleve.ErrorIndexPathDoesNotExist {
 			return nil, err
 		}
-		mapping := bleve.NewIndexMapping()
-		idx, err = bleve.New(pathname, mapping)
+		im := bleve.NewIndexMapping()
+		im.DefaultMapping.AddFieldMappingsAt(Title, bleve.NewTextFieldMapping())
+		im.DefaultMapping.AddFieldMappingsAt(Summary, bleve.NewTextFieldMapping())
+		idx, err = bleve.New(pathname, im)
 		if err != nil {
 			return nil, err
 		}
@@ -51,7 +58,14 @@ func (idx *Index) Index(pk string, data any) error {
 }
 
 func (idx *Index) IndexHTML(pk string, n *html.Node) error {
-	return idx.Index(pk, html.Text(n))
+	return idx.Index(pk, struct {
+		Title, Summary string
+		Text           html.TextOnlyNode
+	}{
+		Title:   html.Title(n),
+		Summary: html.FirstParagraph(n),
+		Text:    html.Text(n),
+	})
 }
 
 func (idx *Index) IndexHTMLFile(pathname string) error {
@@ -73,6 +87,7 @@ func (idx *Index) IndexHTMLFiles(pathnames []string) error {
 
 func (idx *Index) Search(q string) (*Result, error) {
 	req := bleve.NewSearchRequest(bleve.NewMatchQuery(q))
+	req.Fields = []string{Title, Summary}
 
 	// This is a small-scale search engine. 1,000 results should pretty much
 	// always be all of the results. And even if it's not, who's going to scroll

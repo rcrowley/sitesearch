@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.49.7
 	github.com/aws/smithy-go v1.19.0
 	github.com/blevesearch/bleve/v2 v2.3.10
-	github.com/rcrowley/mergician v0.0.0-20240207030905-58fc643ea5b8
+	github.com/rcrowley/mergician v0.0.0-20240213065853-bc3661c5f603
 	golang.org/x/crypto v0.18.0
 	golang.org/x/net v0.20.0
 )
@@ -50,6 +50,7 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v0.0.0-20171115153421-f7279a603ede // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
+	github.com/yuin/goldmark v1.6.0 // indirect
 	go.etcd.io/bbolt v1.3.7 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/term v0.16.0 // indirect

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -55,6 +56,7 @@ func Search(q string) (*html.Node, error) {
 		}
 		ol.AppendChild(newlineIndent(2))
 		ol.AppendChild(li)
+
 		h3 := &html.Node{
 			DataAtom: atom.H3,
 			Data:     "h3",
@@ -72,24 +74,31 @@ func Search(q string) (*html.Node, error) {
 		}
 		h3.AppendChild(a)
 		a.AppendChild(&html.Node{
-			Data: "TODO title",
+			Data: fmt.Sprint(hit.Fields[index.Title]),
 			Type: html.TextNode,
 		})
-		a.AppendChild(&html.Node{
-			DataAtom: atom.Br,
-			Data:     "br",
-			Type:     html.ElementNode,
-		})
+
 		kbd := &html.Node{
 			DataAtom: atom.Kbd,
 			Data:     "kbd",
 			Type:     html.ElementNode,
 		}
-		a.AppendChild(kbd)
-		kbd.AppendChild(&html.Node{
+		li.AppendChild(newlineIndent(3))
+		li.AppendChild(kbd)
+		a = &html.Node{
+			Attr: []html.Attribute{
+				{Key: "href", Val: hit.ID},
+			},
+			DataAtom: atom.A,
+			Data:     "a",
+			Type:     html.ElementNode,
+		}
+		kbd.AppendChild(a)
+		a.AppendChild(&html.Node{
 			Data: hit.ID,
 			Type: html.TextNode,
 		})
+
 		p := &html.Node{
 			DataAtom: atom.P,
 			Data:     "p",
@@ -99,9 +108,10 @@ func Search(q string) (*html.Node, error) {
 		li.AppendChild(p)
 		li.AppendChild(newlineIndent(2))
 		p.AppendChild(&html.Node{
-			Data: "TODO some kind of summary text of the result",
+			Data: fmt.Sprint(hit.Fields[index.Summary]),
 			Type: html.TextNode,
 		})
+
 	}
 	ol.AppendChild(newlineIndent(1))
 

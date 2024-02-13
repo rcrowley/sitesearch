@@ -113,5 +113,11 @@ func testSearch(t *testing.T, idx *Index) {
 	if result.Hits[0].ID != "/test.html" {
 		t.Fatal(result)
 	}
+	if title, ok := result.Hits[0].Fields["Title"].(string); ok && title != "My cool webpage" {
+		t.Fatal(result.Hits[0].Fields)
+	}
+	if summary, ok := result.Hits[0].Fields["Summary"].(string); ok && summary != "Stuff" {
+		t.Fatal(result.Hits[0].Fields)
+	}
 	//t.Log(result)
 }
