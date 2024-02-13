@@ -72,11 +72,18 @@ func (idx *Index) IndexHTMLFiles(pathnames []string) error {
 }
 
 func (idx *Index) Search(q string) (*Result, error) {
-	sr, err := idx.idx.Search(bleve.NewSearchRequest(bleve.NewMatchQuery(q)))
+	req := bleve.NewSearchRequest(bleve.NewMatchQuery(q))
+
+	// This is a small-scale search engine. 1,000 results should pretty much
+	// always be all of the results. And even if it's not, who's going to scroll
+	// through more than 1,000 search results?
+	req.Size = 1000
+
+	result, err := idx.idx.Search(req)
 	if err != nil {
 		return nil, err
 	}
-	return &Result{*sr}, nil
+	return &Result{*result}, nil
 }
 
 func pkForPathname(pathname string) (pk string) {
