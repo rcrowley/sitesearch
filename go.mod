@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.49.7
 	github.com/aws/smithy-go v1.19.0
 	github.com/blevesearch/bleve/v2 v2.3.10
-	github.com/rcrowley/mergician v0.0.0-20240213074044-6d55d5453a81
+	github.com/rcrowley/mergician v0.0.0-20240213224441-1b3706bfe7b3
 	golang.org/x/crypto v0.18.0
 	golang.org/x/net v0.20.0
 )
