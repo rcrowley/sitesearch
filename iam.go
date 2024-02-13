@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
@@ -38,5 +39,8 @@ func iamRole(ctx context.Context, cfg aws.Config, name string) (string, error) {
 	} else if err != nil {
 		return "", err
 	}
+	must(iam.NewRoleExistsWaiter(client).Wait(ctx, &iam.GetRoleInput{
+		RoleName: aws.String(name),
+	}, time.Minute))
 	return aws.ToString(out.Role.Arn), nil
 }
