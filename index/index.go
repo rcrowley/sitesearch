@@ -1,6 +1,7 @@
 package index
 
 import (
+	"path"
 	"strings"
 
 	"github.com/blevesearch/bleve/v2"
@@ -79,12 +80,9 @@ func (idx *Index) Search(q string) (*Result, error) {
 }
 
 func pkForPathname(pathname string) (pk string) {
-	pk = pathname
+	pk = path.Join("/", pathname)
 	if strings.HasSuffix(pk, "/index.html") { // if it's a directory index...
 		pk = strings.TrimSuffix(pk, "index.html") // ...strip the filename but keep the trailing '/'
-	}
-	if pk == "" || pk == "index.html" { // if if ends up empty or just "index.html"...
-		pk = "/" // ...link to it as "/"
 	}
 	return
 }

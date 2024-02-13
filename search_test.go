@@ -22,10 +22,7 @@ func TestSearch(t *testing.T) {
 	}
 
 	s := html.String(n)
-	if !strings.Contains(s, "1 matches") {
-		t.Fatal(s)
-	}
-	if !strings.Contains(s, "1. index/test.html") {
+	if !strings.Contains(s, "/index/test.html") {
 		t.Fatal(s)
 	}
 

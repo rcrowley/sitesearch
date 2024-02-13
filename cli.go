@@ -38,7 +38,7 @@ func main() {
   -n <name>      name of the the Lambda function (default "sitesearch")
   -r <region>    AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
   -t <template>  HTML template for search result pages
-  <input>[...]   pathname to one or more input HTML or Markdown files, given as command-line arguments or on standard input
+  <input>[...]   pathname, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
 `)
 	}
 	flag.Parse()

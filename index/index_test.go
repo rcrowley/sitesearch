@@ -11,7 +11,7 @@ func TestIndex(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	idx.Index("test.html", "cool")
+	idx.Index("/test.html", "cool")
 
 	testSearch(t, idx)
 }
@@ -24,7 +24,7 @@ func TestIndexHTML(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	idx.IndexHTML("test.html", n)
+	idx.IndexHTML("/test.html", n)
 
 	testSearch(t, idx)
 }
@@ -43,7 +43,7 @@ func TestIndexGoFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Hits[0].ID != "index_test.go" {
+	if result.Hits[0].ID != "/index_test.go" {
 		t.Fatal(result)
 	}
 	//t.Log(result)
@@ -73,10 +73,10 @@ func TestIndexHTMLFiles(t *testing.T) {
 
 func TestPKForPathname(t *testing.T) {
 	for pathname, pk := range map[string]string{
-		"foo/bar.html":       "foo/bar.html",
-		"foo/bar/index.html": "foo/bar/",
-		"foo.html":           "foo.html",
-		"foo/index.html":     "foo/",
+		"foo/bar.html":       "/foo/bar.html",
+		"foo/bar/index.html": "/foo/bar/",
+		"foo.html":           "/foo.html",
+		"foo/index.html":     "/foo/",
 		"index.html":         "/",
 	} {
 		if pkForPathname(pathname) != pk {
@@ -110,7 +110,7 @@ func testSearch(t *testing.T, idx *Index) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Hits[0].ID != "test.html" {
+	if result.Hits[0].ID != "/test.html" {
 		t.Fatal(result)
 	}
 	//t.Log(result)
