@@ -10,11 +10,13 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
+	"github.com/rcrowley/mergician/html"
 	"github.com/rcrowley/sitesearch/index"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -55,12 +57,21 @@ func main() {
 	// Index all the HTML we've been told to. Store the index where the Lambda
 	// function is eventually going to look for it.
 	log.Printf("indexing HTML documents")
+	f := func(n *html.Node) (string, string) {
+		title := html.Title(n)
+
+		// Remove redundant text from titles on from SERPs. TODO parameterize.
+		title = strings.SplitN(title, "&mdash;", 2)[0]
+		title = strings.SplitN(title, "—", 2)[0] // an unencoded &mdash;
+
+		return strings.TrimSpace(title), strings.TrimSpace(html.FirstParagraph(n))
+	}
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
-	must(idx.IndexHTMLFiles(flag.Args(), nil))
+	must(idx.IndexHTMLFiles(flag.Args(), f))
 	if !terminal.IsTerminal(0) {
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
-			must(idx.IndexHTMLFile(scanner.Text(), nil))
+			must(idx.IndexHTMLFile(scanner.Text(), f))
 		}
 		must(scanner.Err())
 	}
