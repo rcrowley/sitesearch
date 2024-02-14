@@ -56,11 +56,11 @@ func main() {
 	// function is eventually going to look for it.
 	log.Printf("indexing HTML documents")
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
-	must(idx.IndexHTMLFiles(flag.Args()))
+	must(idx.IndexHTMLFiles(flag.Args(), nil))
 	if !terminal.IsTerminal(0) {
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
-			must(idx.IndexHTMLFile(scanner.Text()))
+			must(idx.IndexHTMLFile(scanner.Text(), nil))
 		}
 		must(scanner.Err())
 	}

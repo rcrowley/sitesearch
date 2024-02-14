@@ -11,7 +11,7 @@ import (
 func TestCopyRecursive(t *testing.T) {
 	must(os.RemoveAll(IdxFilename))
 	idx := must2(index.Open(IdxFilename))
-	must(idx.IndexHTMLFile("index/test.html"))
+	must(idx.IndexHTMLFile("index/test.html", nil))
 	must(idx.Close())
 	defer os.RemoveAll(IdxFilename)
 

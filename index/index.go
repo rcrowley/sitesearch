@@ -57,28 +57,41 @@ func (idx *Index) Index(pk string, data any) error {
 	return idx.idx.Index(pk, data)
 }
 
-func (idx *Index) IndexHTML(pk string, n *html.Node) error {
+// IndexHTML adds the given *html.Node to the index under the given pk after
+// calling f to extract the Title and Summary fields.
+func (idx *Index) IndexHTML(pk string, n *html.Node, f func(*html.Node) (string, string)) error {
+	var title, summary string
+	if f != nil {
+		title, summary = f(n)
+	} else {
+		title = html.Title(n)
+		summary = html.FirstParagraph(n)
+	}
 	return idx.Index(pk, struct {
 		Title, Summary string
 		Text           html.TextOnlyNode
 	}{
-		Title:   html.Title(n),
-		Summary: html.FirstParagraph(n),
+		Title:   title,
+		Summary: summary,
 		Text:    html.Text(n),
 	})
 }
 
-func (idx *Index) IndexHTMLFile(pathname string) error {
+// IndexHTMLFile adds the HTML from the named file to the index under the
+// file's path after calling f to extract the Title and Summary fields.
+func (idx *Index) IndexHTMLFile(pathname string, f func(*html.Node) (string, string)) error {
 	n, err := html.ParseFile(pathname)
 	if err != nil {
 		return err
 	}
-	return idx.IndexHTML(pkForPathname(pathname), n)
+	return idx.IndexHTML(pkForPathname(pathname), n, f)
 }
 
-func (idx *Index) IndexHTMLFiles(pathnames []string) error {
+// IndexHTMLFiles adds HTML from each named file to the index under the
+// file's path after calling f to extract the Title and Summary fields.
+func (idx *Index) IndexHTMLFiles(pathnames []string, f func(*html.Node) (string, string)) error {
 	for _, pathname := range pathnames {
-		if err := idx.IndexHTMLFile(pathname); err != nil {
+		if err := idx.IndexHTMLFile(pathname, f); err != nil {
 			return err
 		}
 	}

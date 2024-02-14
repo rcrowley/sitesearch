@@ -24,9 +24,37 @@ func TestIndexHTML(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	idx.IndexHTML("/test.html", n)
+	idx.IndexHTML("/test.html", n, nil)
 
 	testSearch(t, idx)
+}
+
+func TestIndexHTMLCustom(t *testing.T) {
+	idx := setup(t)
+	defer teardown(t, idx)
+
+	n, err := html.ParseFile("test.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	idx.IndexHTML("/test.html", n, func(n *html.Node) (string, string) {
+		return "foo", "bar"
+	})
+
+	result, err := idx.Search("cool")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Hits[0].ID != "/test.html" {
+		t.Fatal(result)
+	}
+	if title, ok := result.Hits[0].Fields["Title"].(string); ok && title != "foo" {
+		t.Fatal(result.Hits[0].Fields)
+	}
+	if summary, ok := result.Hits[0].Fields["Summary"].(string); ok && summary != "bar" {
+		t.Fatal(result.Hits[0].Fields)
+	}
+	t.Log(result)
 }
 
 // TestIndexGoFile shows that this will work just fine, albeit the entire
@@ -35,7 +63,7 @@ func TestIndexGoFile(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	if err := idx.IndexHTMLFile("index_test.go"); err != nil {
+	if err := idx.IndexHTMLFile("index_test.go", nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -53,7 +81,7 @@ func TestIndexHTMLFile(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	if err := idx.IndexHTMLFile("test.html"); err != nil {
+	if err := idx.IndexHTMLFile("test.html", nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -64,7 +92,7 @@ func TestIndexHTMLFiles(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	if err := idx.IndexHTMLFiles([]string{"test.html"}); err != nil {
+	if err := idx.IndexHTMLFiles([]string{"test.html"}, nil); err != nil {
 		t.Fatal(err)
 	}
 
