@@ -123,6 +123,13 @@ func SearchHandler(ctx context.Context, req events.LambdaFunctionURLRequest) (re
 	resp.Headers = map[string]string{"Content-Type": "text/html; charset=utf-8"}
 	var n, tmpl *html.Node
 
+	if !strings.HasSuffix(req.RawPath, "/") {
+		resp.StatusCode = http.StatusFound
+		resp.Headers["Location"] = fmt.Sprintf("%s/", req.RawPath)
+		resp.Body = html.String(errorNode(fmt.Errorf("redirecting to %s", req.RawPath)))
+		return
+	}
+
 	if q := req.QueryStringParameters["q"]; q == "" {
 		n = &html.Node{
 			DataAtom: atom.Body,
