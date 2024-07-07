@@ -58,13 +58,13 @@ func main() {
 	// function is eventually going to look for it.
 	log.Printf("indexing HTML documents")
 	f := func(n *html.Node) (string, string) {
-		title := html.Title(n)
+		title := html.Text(html.Title(n)).String()
 
 		// Remove redundant text from titles on from SERPs. TODO parameterize.
 		title = strings.SplitN(title, "&mdash;", 2)[0]
 		title = strings.SplitN(title, "—", 2)[0] // an unencoded &mdash;
 
-		return strings.TrimSpace(title), strings.TrimSpace(html.FirstParagraph(n))
+		return strings.TrimSpace(title), strings.TrimSpace(html.Text(html.FirstParagraph(n)).String())
 	}
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
 	must(idx.IndexHTMLFiles(flag.Args(), f))

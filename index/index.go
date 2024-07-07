@@ -64,8 +64,8 @@ func (idx *Index) IndexHTML(pk string, n *html.Node, f func(*html.Node) (string,
 	if f != nil {
 		title, summary = f(n)
 	} else {
-		title = html.Title(n)
-		summary = html.FirstParagraph(n)
+		title = html.Text(html.Title(n)).String()
+		summary = html.Text(html.FirstParagraph(n)).String()
 	}
 	return idx.Index(pk, struct {
 		Title, Summary string
