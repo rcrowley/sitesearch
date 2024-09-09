@@ -1,5 +1,7 @@
 *~
 bootstrap
+go.work
+go.work.sum
 *.idx
 *.sw[opx]
 *.zip
