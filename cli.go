@@ -34,17 +34,17 @@ func init() {
 func main() {
 	name := flag.String("n", "sitesearch", "name of the the Lambda function")
 	region := flag.String("r", "", "AWS region to host the Lambda function")
-	tmpl := flag.String("t", "", "HTML template for search result pages")
+	layout := flag.String("t", "", "HTML template for search result pages")
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, `Usage: sitesearch [-n <name>] [-r <region>] -t <template> <input>[...]
-  -n <name>      name of the the Lambda function (default "sitesearch")
-  -r <region>    AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
-  -t <template>  HTML template for search result pages
-  <input>[...]   pathname, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
+  -l <layout>   site layout HTML document for search result pages
+  -n <name>     name of the the Lambda function (default "sitesearch")
+  -r <region>   AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
+  <input>[...]  pathname, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
 `)
 	}
 	flag.Parse()
-	if *tmpl == "" {
+	if *layout == "" {
 		log.Fatal("-t <template> is required")
 	}
 
@@ -81,7 +81,7 @@ func main() {
 	// is eventually going to look for it.
 	must(os.WriteFile(
 		filepath.Join(tmp, TmplFilename),
-		must2(os.ReadFile(*tmpl)),
+		must2(os.ReadFile(*layout)),
 		0666,
 	))
 
