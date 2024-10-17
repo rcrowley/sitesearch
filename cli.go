@@ -32,9 +32,9 @@ func init() {
 }
 
 func main() {
+	layout := flag.String("l", "", "site layout HTML document for search result pages")
 	name := flag.String("n", "sitesearch", "name of the the Lambda function")
 	region := flag.String("r", "", "AWS region to host the Lambda function")
-	layout := flag.String("t", "", "HTML template for search result pages")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
   -l <layout>   site layout HTML document for search result pages
