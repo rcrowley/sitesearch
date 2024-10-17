@@ -5,7 +5,10 @@ Installation
 ------------
 
 ```sh
-go get github.com/rcrowley/sitesearch
+git clone https://github.com/rcrowley/sitesearch.git
+cd sitesearch
+go generate
+go install
 ```
 
 Usage
