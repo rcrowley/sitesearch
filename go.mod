@@ -10,9 +10,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.56.1
 	github.com/aws/smithy-go v1.20.3
 	github.com/blevesearch/bleve/v2 v2.4.1
-	github.com/rcrowley/mergician v0.0.0-20240707045248-03c4d90059d8
-	golang.org/x/crypto v0.25.0
-	golang.org/x/net v0.27.0
+	github.com/rcrowley/mergician v0.0.0-20241014060337-e6babab1ff1a
+	golang.org/x/crypto v0.28.0
+	golang.org/x/net v0.30.0
 )
 
 require (
@@ -54,10 +54,10 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
-	github.com/yuin/goldmark v1.6.0 // indirect
+	github.com/yuin/goldmark v1.7.8 // indirect
 	go.etcd.io/bbolt v1.3.10 // indirect
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
-	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/term v0.22.0 // indirect
+	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
+	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/term v0.25.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 )
