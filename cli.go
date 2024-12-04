@@ -7,6 +7,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -27,15 +28,12 @@ const (
 	timeout int32 = 29 // seconds
 )
 
-func init() {
-	log.SetFlags(0)
-}
-
-func main() {
-	layout := flag.String("l", "", "site layout HTML document for search result pages")
-	name := flag.String("n", "sitesearch", "name of the the Lambda function")
-	region := flag.String("r", "", "AWS region to host the Lambda function")
-	flag.Usage = func() {
+func Main(args []string, stdin io.Reader, stdout io.Writer) {
+	flags := flag.NewFlagSet(args[0], flag.ExitOnError)
+	layout := flags.String("l", "", "site layout HTML document for search result pages")
+	name := flags.String("n", "sitesearch", "name of the the Lambda function")
+	region := flags.String("r", "", "AWS region to host the Lambda function")
+	flags.Usage = func() {
 		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
   -l <layout>   site layout HTML document for search result pages
   -n <name>     name of the the Lambda function (default "sitesearch")
@@ -43,7 +41,7 @@ func main() {
   <input>[...]  pathname, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
 `)
 	}
-	flag.Parse()
+	flags.Parse(args[1:])
 	if *layout == "" {
 		log.Fatal("-t <template> is required")
 	}
@@ -67,7 +65,7 @@ func main() {
 		return strings.TrimSpace(title), strings.TrimSpace(html.Text(html.FirstParagraph(n)).String())
 	}
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
-	must(idx.IndexHTMLFiles(flag.Args(), f))
+	must(idx.IndexHTMLFiles(flags.Args(), f))
 	if !terminal.IsTerminal(0) {
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
@@ -176,4 +174,12 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(functionURL)
+}
+
+func init() {
+	log.SetFlags(0)
+}
+
+func main() {
+	Main(os.Args, os.Stdin, os.Stdout)
 }
