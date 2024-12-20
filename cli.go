@@ -43,7 +43,7 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 	}
 	flags.Parse(args[1:])
 	if *layout == "" {
-		log.Fatal("-t <template> is required")
+		log.Fatal("-l <layout> is required")
 	}
 
 	tmp, err := os.MkdirTemp("", "sitesearch-")
@@ -75,7 +75,7 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 	}
 	must(idx.Close())
 
-	// Copy the search engine result page template to where the Lambda function
+	// Copy the search engine result page layout to where the Lambda function
 	// is eventually going to look for it.
 	must(os.WriteFile(
 		filepath.Join(tmp, TmplFilename),
@@ -83,7 +83,7 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 		0666,
 	))
 
-	// Package up the application, index, and template for service in Lambda.
+	// Package up the application, index, and layout for service in Lambda.
 	log.Printf("packaging the search application")
 	oldpwd := must2(os.Getwd())
 	must(os.Chdir(tmp))
