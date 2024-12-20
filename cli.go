@@ -39,6 +39,8 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
   -n <name>     name of the the Lambda function (default "sitesearch")
   -r <region>   AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
   <input>[...]  pathname, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+
+Synopsis: sitesearch constructs an inverted index and serves searches over it via AWS Lambda.
 `)
 	}
 	flags.Parse(args[1:])
