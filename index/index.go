@@ -1,7 +1,7 @@
 package index
 
 import (
-	"path"
+	urlpath "path"
 	"strings"
 
 	"github.com/blevesearch/bleve/v2"
@@ -22,8 +22,8 @@ type (
 	}
 )
 
-func Open(pathname string) (*Index, error) {
-	idx, err := bleve.Open(pathname)
+func Open(path string) (*Index, error) {
+	idx, err := bleve.Open(path)
 	if err != nil {
 		if err != bleve.ErrorIndexPathDoesNotExist {
 			return nil, err
@@ -31,7 +31,7 @@ func Open(pathname string) (*Index, error) {
 		im := bleve.NewIndexMapping()
 		im.DefaultMapping.AddFieldMappingsAt(Title, bleve.NewTextFieldMapping())
 		im.DefaultMapping.AddFieldMappingsAt(Summary, bleve.NewTextFieldMapping())
-		idx, err = bleve.New(pathname, im)
+		idx, err = bleve.New(path, im)
 		if err != nil {
 			return nil, err
 		}
@@ -39,8 +39,8 @@ func Open(pathname string) (*Index, error) {
 	return &Index{idx}, nil
 }
 
-func OpenReadOnly(pathname string) (*Index, error) {
-	idx, err := bleve.OpenUsing(pathname, map[string]interface{}{
+func OpenReadOnly(path string) (*Index, error) {
+	idx, err := bleve.OpenUsing(path, map[string]interface{}{
 		"read_only": true,
 	})
 	if err != nil {
@@ -79,19 +79,19 @@ func (idx *Index) IndexHTML(pk string, n *html.Node, f func(*html.Node) (string,
 
 // IndexHTMLFile adds the HTML from the named file to the index under the
 // file's path after calling f to extract the Title and Summary fields.
-func (idx *Index) IndexHTMLFile(pathname string, f func(*html.Node) (string, string)) error {
-	n, err := html.ParseFile(pathname)
+func (idx *Index) IndexHTMLFile(path string, f func(*html.Node) (string, string)) error {
+	n, err := html.ParseFile(path)
 	if err != nil {
 		return err
 	}
-	return idx.IndexHTML(pkForPathname(pathname), n, f)
+	return idx.IndexHTML(pkForPath(path), n, f)
 }
 
 // IndexHTMLFiles adds HTML from each named file to the index under the
 // file's path after calling f to extract the Title and Summary fields.
-func (idx *Index) IndexHTMLFiles(pathnames []string, f func(*html.Node) (string, string)) error {
-	for _, pathname := range pathnames {
-		if err := idx.IndexHTMLFile(pathname, f); err != nil {
+func (idx *Index) IndexHTMLFiles(paths []string, f func(*html.Node) (string, string)) error {
+	for _, path := range paths {
+		if err := idx.IndexHTMLFile(path, f); err != nil {
 			return err
 		}
 	}
@@ -114,8 +114,8 @@ func (idx *Index) Search(q string) (*Result, error) {
 	return &Result{*result}, nil
 }
 
-func pkForPathname(pathname string) (pk string) {
-	pk = path.Join("/", pathname)
+func pkForPath(path string) (pk string) {
+	pk = urlpath.Join("/", path)
 	if strings.HasSuffix(pk, "/index.html") { // if it's a directory index...
 		pk = strings.TrimSuffix(pk, "index.html") // ...strip the filename but keep the trailing '/'
 	}

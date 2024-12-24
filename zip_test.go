@@ -36,7 +36,7 @@ func TestZip(t *testing.T) {
 	var count int
 	for _, f := range r.File {
 		fi := f.FileInfo()
-		switch f.Name { // f.Name is the relative pathname; fi.Name() is the basename
+		switch f.Name { // f.Name is the relative path; fi.Name() is the base
 		case "bootstrap":
 			count++
 			if fi.Size() < 1000000 {

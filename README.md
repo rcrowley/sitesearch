@@ -21,7 +21,7 @@ sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
 * `-l <layout>`: site layout HTML document for search result pages
 * `-n <name>`: name of the the Lambda function (default "sitesearch")
 * `-r <region>`: AWS region to host the Lambda function (default to AWS\_DEFAULT\_REGION in the environment)
-* `<input>[...]`: pathname, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+* `<input>[...]`: path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
 
 See also
 --------

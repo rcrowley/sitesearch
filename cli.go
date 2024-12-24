@@ -34,11 +34,12 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 	name := flags.String("n", "sitesearch", "name of the the Lambda function")
 	region := flags.String("r", "", "AWS region to host the Lambda function")
 	flags.Usage = func() {
+		// TODO [-x <exclude>] [<directory>[...]] just like feed and deadlinks
 		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
   -l <layout>   site layout HTML document for search result pages
   -n <name>     name of the the Lambda function (default "sitesearch")
   -r <region>   AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
-  <input>[...]  pathname, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+  <input>[...]  path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
 
 Synopsis: sitesearch constructs an inverted index and serves searches over it via AWS Lambda.
 `)

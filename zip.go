@@ -9,19 +9,17 @@ import (
 	"os/exec"
 )
 
-const (
-	ZipFilename = "sitesearch.zip"
-)
+const ZipFilename = "sitesearch.zip"
 
 // Zip writes the starting-point zip file that contains the compiled Lambda
 // function, named bootstrap per the Lambda provided.al* runtime requirement,
 // to disk, and adds the file with the given relative pathname to it.
 func Zip(
-	zipPathname string, // output
-	idxPathname, tmplPathname string, // input
+	zipPath string, // output
+	idxPath, tmplPath string, // input
 ) ([]byte, error) {
 
-	f, err := os.Create(zipPathname)
+	f, err := os.Create(zipPath)
 	if err != nil {
 		return nil, err
 	}
@@ -38,15 +36,15 @@ func Zip(
 	// If you ever need to debug zip(1), add these options:
 	// "-la", "-lf", "/tmp/zip.log", "-li"
 
-	if err := exec.Command("zip", "-X", "-r", zipPathname, idxPathname).Run(); err != nil {
+	if err := exec.Command("zip", "-X", "-r", zipPath, idxPath).Run(); err != nil {
 		return nil, err
 	}
 
-	if err := exec.Command("zip", "-X", "-j", zipPathname, tmplPathname).Run(); err != nil {
+	if err := exec.Command("zip", "-X", "-j", zipPath, tmplPath).Run(); err != nil {
 		return nil, err
 	}
 
-	return os.ReadFile(zipPathname)
+	return os.ReadFile(zipPath)
 }
 
 //go:generate env GOARCH=arm64 GOOS=linux go build -o bootstrap -tags lambda

@@ -99,16 +99,16 @@ func TestIndexHTMLFiles(t *testing.T) {
 	testSearch(t, idx)
 }
 
-func TestPKForPathname(t *testing.T) {
-	for pathname, pk := range map[string]string{
+func TestPKForPath(t *testing.T) {
+	for path, pk := range map[string]string{
 		"foo/bar.html":       "/foo/bar.html",
 		"foo/bar/index.html": "/foo/bar/",
 		"foo.html":           "/foo.html",
 		"foo/index.html":     "/foo/",
 		"index.html":         "/",
 	} {
-		if pkForPathname(pathname) != pk {
-			t.Fatalf("pathname %q produced pk %q instead of %q", pathname, pkForPathname(pathname), pk)
+		if pkForPath(path) != pk {
+			t.Fatalf("path %q produced pk %q instead of %q", path, pkForPath(path), pk)
 		}
 	}
 }

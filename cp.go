@@ -8,23 +8,23 @@ import (
 )
 
 func CopyRecursive(src, dst string) error {
-	return filepath.WalkDir(src, func(pathname string, de fs.DirEntry, err error) error {
+	return filepath.WalkDir(src, func(path string, de fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		if pathname, err = filepath.Rel(src, pathname); err != nil {
+		if path, err = filepath.Rel(src, path); err != nil {
 			return err
 		}
 
 		if de.IsDir() {
-			return os.Mkdir(filepath.Join(dst, pathname), 0777)
+			return os.Mkdir(filepath.Join(dst, path), 0777)
 		}
 
-		r, err := os.Open(filepath.Join(src, pathname))
+		r, err := os.Open(filepath.Join(src, path))
 		if err != nil {
 			return err
 		}
-		w, err := os.Create(filepath.Join(dst, pathname))
+		w, err := os.Create(filepath.Join(dst, path))
 		if err != nil {
 			return err
 		}
