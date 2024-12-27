@@ -1,6 +1,8 @@
 Sitesearch
 ==========
 
+Index all the HTML files in a document root directory and serve queries to it, including an HTML form and SERP, via AWS Lambda.
+
 Installation
 ------------
 
@@ -19,9 +21,11 @@ sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
 ```
 
 * `-l <layout>`: site layout HTML document for search result pages
-* `-n <name>`: name of the the Lambda function (default "sitesearch")
-* `-r <region>`: AWS region to host the Lambda function (default to AWS\_DEFAULT\_REGION in the environment)
+* `-n <name>`: name of the the Lambda function (defaults to "sitesearch")
+* `-r <region>`: AWS region to host the Lambda function (defaults to `AWS_REGION` or `AWS_DEFAULT_REGION` in the environment)
 * `<input>[...]`: path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+
+AWS credentials are sourced from the environment or AWS SDK configuration files. There are no command-line options for passing access key IDs, secrets, or session tokens.
 
 See also
 --------
@@ -30,4 +34,5 @@ Sitesearch is part of the [Mergician](https://github.com/rcrowley/mergician) sui
 
 * [Deadlinks](https://github.com/rcrowley/deadlinks): Scan a document root directory for dead links
 * [Electrostatic](https://github.com/rcrowley/electrostatic): Mergician-powered, pure-HTML CMS
+* [Feed](https://github.com/rcrowley/feed): Scan a document root directory to construct an Atom feed
 * [Frag](https://github.com/rcrowley/frag): Extract fragments of HTML documents

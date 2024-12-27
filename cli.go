@@ -37,8 +37,8 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 		// TODO [-x <exclude>] [<directory>[...]] just like feed and deadlinks
 		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
   -l <layout>   site layout HTML document for search result pages
-  -n <name>     name of the the Lambda function (default "sitesearch")
-  -r <region>   AWS region to host the Lambda function (default to AWS_DEFAULT_REGION in the environment)
+  -n <name>     name of the the Lambda function (defaults to "sitesearch")
+  -r <region>   AWS region to host the Lambda function (defaults to AWS_REGION or AWS_DEFAULT_REGION in the environment)
   <input>[...]  path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
 
 Synopsis: sitesearch constructs an inverted index and serves searches over it via AWS Lambda.
@@ -68,7 +68,7 @@ Synopsis: sitesearch constructs an inverted index and serves searches over it vi
 		return strings.TrimSpace(title), strings.TrimSpace(html.Text(html.FirstParagraph(n)).String())
 	}
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
-	must(idx.IndexHTMLFiles(flags.Args(), f))
+	must(idx.IndexHTMLFiles(flags.Args(), f)) // FIXME
 	if !terminal.IsTerminal(0) {
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
