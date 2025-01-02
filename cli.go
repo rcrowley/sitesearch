@@ -3,7 +3,6 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"flag"
 	"fmt"
@@ -17,9 +16,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
+	"github.com/rcrowley/mergician/files"
 	"github.com/rcrowley/mergician/html"
 	"github.com/rcrowley/sitesearch/index"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 const (
@@ -33,13 +32,14 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 	layout := flags.String("l", "", "site layout HTML document for search result pages")
 	name := flags.String("n", "sitesearch", "name of the the Lambda function")
 	region := flags.String("r", "", "AWS region to host the Lambda function")
+	exclude := files.NewStringSliceFlag(flags, "x", "subdirectory of <docroot> to exclude (may be repeated)")
 	flags.Usage = func() {
-		// TODO [-x <exclude>] [<directory>[...]] just like feed and deadlinks
-		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
-  -l <layout>   site layout HTML document for search result pages
-  -n <name>     name of the the Lambda function (defaults to "sitesearch")
-  -r <region>   AWS region to host the Lambda function (defaults to AWS_REGION or AWS_DEFAULT_REGION in the environment)
-  <input>[...]  path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] [-x <exclude>[...]] [<docroot>[...]]
+  -l <layout>     site layout HTML document for search result pages
+  -n <name>       name of the the Lambda function (defaults to "sitesearch")
+  -r <region>     AWS region to host the Lambda function (defaults to AWS_REGION or AWS_DEFAULT_REGION in the environment)
+  -x <exclude>    subdirectory of <docroot> to exclude (may be repeated)
+  <docroot>[...]  path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
 
 Synopsis: sitesearch constructs an inverted index and serves searches over it via AWS Lambda.
 `)
@@ -68,13 +68,15 @@ Synopsis: sitesearch constructs an inverted index and serves searches over it vi
 		return strings.TrimSpace(title), strings.TrimSpace(html.Text(html.FirstParagraph(n)).String())
 	}
 	idx := must2(index.Open(filepath.Join(tmp, IdxFilename)))
-	must(idx.IndexHTMLFiles(flags.Args(), f)) // FIXME
-	if !terminal.IsTerminal(0) {
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			must(idx.IndexHTMLFile(scanner.Text(), f))
-		}
-		must(scanner.Err())
+	var docroots []string
+	if flags.NArg() == 0 {
+		docroots = []string{"."}
+	} else {
+		docroots = flags.Args()
+	}
+	lists := must2(files.AllInputs(docroots, *exclude))
+	for _, list := range lists {
+		must(idx.IndexHTMLFiles(list.QualifiedPaths(), f))
 	}
 	must(idx.Close())
 
