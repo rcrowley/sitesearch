@@ -39,9 +39,9 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
   -n <name>       name of the the Lambda function (defaults to "sitesearch")
   -r <region>     AWS region to host the Lambda function (defaults to AWS_REGION or AWS_DEFAULT_REGION in the environment)
   -x <exclude>    subdirectory of <docroot> to exclude (may be repeated)
-  <docroot>[...]  path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+  <docroot>[...]  document root directory to scan (defaults to the current working directory)
 
-Synopsis: sitesearch constructs an inverted index and serves searches over it via AWS Lambda.
+Synopsis: sitesearch scans each <docroot> (or the current working directory) for HTML documents, constructs an inverted index, and serves queries to it, including an HTML form and SERP, via AWS Lambda.
 `)
 	}
 	flags.Parse(args[1:])
