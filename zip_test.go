@@ -12,6 +12,8 @@ import (
 )
 
 func TestZip(t *testing.T) {
+	must(os.Chdir("testdata"))
+	defer func() { must(os.Chdir("..")) }()
 
 	// Known-good sitesearch.idx to add to the zip file.
 	must(os.RemoveAll(IdxFilename))
@@ -19,7 +21,7 @@ func TestZip(t *testing.T) {
 	must(idx.Close())
 	defer os.RemoveAll(IdxFilename)
 
-	zipFile, err := Zip(ZipFilename, IdxFilename, "index/test.html")
+	zipFile, err := Zip(ZipFilename, IdxFilename, "../index/testdata/test.html")
 	if err != nil {
 		t.Fatal(err)
 	}

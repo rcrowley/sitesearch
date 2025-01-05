@@ -2,12 +2,16 @@ package main
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/aws/aws-lambda-go/events"
 )
 
 func TestLambdaForm(t *testing.T) {
+	must(os.Chdir("testdata"))
+	defer func() { must(os.Chdir("..")) }()
+
 	ctx := context.Background()
 	req := events.LambdaFunctionURLRequest{RawPath: "/search/"}
 	resp, err := SearchHandler(ctx, req)
@@ -39,6 +43,9 @@ func TestLambdaForm(t *testing.T) {
 // tries to execute a search. It doesn't work because there's no index but that
 // doesn't matter because the actual search is tested elsewhere.
 func TestLambdaSERP(t *testing.T) {
+	must(os.Chdir("testdata"))
+	defer func() { must(os.Chdir("..")) }()
+
 	ctx := context.Background()
 	req := events.LambdaFunctionURLRequest{
 		RawPath:               "/search/",

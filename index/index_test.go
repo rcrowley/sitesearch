@@ -63,7 +63,7 @@ func TestIndexGoFile(t *testing.T) {
 	idx := setup(t)
 	defer teardown(t, idx)
 
-	if err := idx.IndexHTMLFile("index_test.go", nil); err != nil {
+	if err := idx.IndexHTMLFile("test.go", nil); err != nil {
 		t.Fatal(err)
 	}
 
@@ -71,7 +71,7 @@ func TestIndexGoFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if result.Hits[0].ID != "/index_test.go" {
+	if result.Hits[0].ID != "/test.go" {
 		t.Fatal(result)
 	}
 	//t.Log(result)
@@ -114,6 +114,9 @@ func TestPKForPath(t *testing.T) {
 }
 
 func setup(t *testing.T) *Index {
+	if err := os.Chdir("testdata"); err != nil {
+		t.Fatal(err)
+	}
 	if err := os.RemoveAll("test.idx"); err != nil {
 		t.Fatal(err)
 	}
@@ -129,6 +132,9 @@ func teardown(t *testing.T, idx *Index) {
 		t.Fatal(err)
 	}
 	if err := os.RemoveAll("test.idx"); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(".."); err != nil {
 		t.Fatal(err)
 	}
 }

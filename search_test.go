@@ -10,9 +10,12 @@ import (
 )
 
 func TestSearch(t *testing.T) {
+	must(os.Chdir("testdata"))
+	defer func() { must(os.Chdir("..")) }()
+
 	must(os.RemoveAll(IdxFilename))
 	idx := must2(index.Open(IdxFilename))
-	must(idx.IndexHTMLFile("index/test.html", nil))
+	must(idx.IndexHTMLFile("../index/testdata/test.html", nil))
 	must(idx.Close())
 	defer os.RemoveAll(IdxFilename)
 
@@ -22,7 +25,7 @@ func TestSearch(t *testing.T) {
 	}
 
 	s := html.String(n)
-	if !strings.Contains(s, "/index/test.html") {
+	if !strings.Contains(s, "/index/testdata/test.html") {
 		t.Fatal(s)
 	}
 
