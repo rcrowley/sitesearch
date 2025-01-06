@@ -17,13 +17,14 @@ Usage
 -----
 
 ```sh
-sitesearch -l <layout> [-n <name>] [-r <region>] <input>[...]
+sitesearch -l <layout> [-n <name>] [-r <region>] [-x <exclude>[...]] [<docroot>[...]]
 ```
 
 * `-l <layout>`: site layout HTML document for search result pages
 * `-n <name>`: name of the the Lambda function (defaults to "sitesearch")
 * `-r <region>`: AWS region to host the Lambda function (defaults to `AWS_REGION` or `AWS_DEFAULT_REGION` in the environment)
-* `<input>[...]`: path, relative to your site's root, of one or more HTML files, given as command-line arguments or on standard input
+* `-x <exclude>`: subdirectory of `<docroot>` to exclude (may be repeated)
+* `<docroot>`: document root directory to scan (defaults to the current working directory; may be repeated)
 
 AWS credentials are sourced from the environment or AWS SDK configuration files. There are no command-line options for passing access key IDs, secrets, or session tokens.
 

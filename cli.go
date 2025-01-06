@@ -35,11 +35,11 @@ func Main(args []string, stdin io.Reader, stdout io.Writer) {
 	exclude := files.NewStringSliceFlag(flags, "x", "subdirectory of <docroot> to exclude (may be repeated)")
 	flags.Usage = func() {
 		fmt.Fprint(os.Stderr, `Usage: sitesearch -l <layout> [-n <name>] [-r <region>] [-x <exclude>[...]] [<docroot>[...]]
-  -l <layout>     site layout HTML document for search result pages
-  -n <name>       name of the the Lambda function (defaults to "sitesearch")
-  -r <region>     AWS region to host the Lambda function (defaults to AWS_REGION or AWS_DEFAULT_REGION in the environment)
-  -x <exclude>    subdirectory of <docroot> to exclude (may be repeated)
-  <docroot>[...]  document root directory to scan (defaults to the current working directory)
+  -l <layout>   site layout HTML document for search result pages
+  -n <name>     name of the the Lambda function (defaults to "sitesearch")
+  -r <region>   AWS region to host the Lambda function (defaults to AWS_REGION or AWS_DEFAULT_REGION in the environment)
+  -x <exclude>  subdirectory of <docroot> to exclude (may be repeated)
+  <docroot>     document root directory to scan (defaults to the current working directory; may be repeated)
 
 Synopsis: sitesearch scans each <docroot> (or the current working directory) for HTML documents, constructs an inverted index, and serves queries to it, including an HTML form and SERP, via AWS Lambda.
 `)
