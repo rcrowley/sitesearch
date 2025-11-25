@@ -1,6 +1,6 @@
 module github.com/rcrowley/sitesearch
 
-go 1.24.3
+go 1.24.5
 
 require (
 	github.com/aws/aws-lambda-go v1.48.0
