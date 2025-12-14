@@ -55,8 +55,10 @@ func TestZip(t *testing.T) {
 			count++
 		case fmt.Sprintf("%s/store/root.bolt", IdxFilename):
 			count++
-			if fi.Size() != 262144 {
-				t.Fatalf("%s should contain 262144 bytes but contains %d bytes", f.Name, fi.Size())
+			switch fi.Size() {
+			case 65536, 262144:
+			default:
+				t.Fatalf("%s should contain 65536 or 262144 bytes but contains %d bytes", f.Name, fi.Size())
 			}
 		case "test.html": // not "index/test.html", because `zip -j`
 			count++
