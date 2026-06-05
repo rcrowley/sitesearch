@@ -57,3 +57,9 @@ require (
 	golang.org/x/sys v0.39.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
+
+// TEMPORARY: this published-only indexing depends on files.PublishStatus,
+// which lives on the editorial-workflow branch of mergician
+// (rcrowley/mergician PR). Remove this replace once that change is merged
+// and the require above is bumped to a version that includes it.
+replace github.com/rcrowley/mergician => github.com/rbotley/mergician v0.0.0-20260605061827-8cc9af92e627

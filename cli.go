@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -74,9 +75,14 @@ Synopsis: sitesearch scans each <docroot> (or the current working directory) for
 	} else {
 		docroots = flags.Args()
 	}
+	// Index only what's published right now, so drafts, not-yet-published, and
+	// expired pages stay out of search results just as they stay out of the
+	// document root and the Atom feed. (sitesearch's -n already names the
+	// Lambda function, so the reference time is simply the current time here.)
+	reference := time.Now()
 	lists := must2(files.AllInputs(docroots, *exclude))
 	for _, list := range lists {
-		must(idx.IndexHTMLFiles(list.QualifiedPaths(), f))
+		must(idx.IndexHTMLFiles(publishedPaths(list.QualifiedPaths(), reference), f))
 	}
 	must(idx.Close())
 
@@ -179,6 +185,20 @@ Synopsis: sitesearch scans each <docroot> (or the current working directory) for
 		log.Fatal(err)
 	}
 	fmt.Println(functionURL)
+}
+
+// publishedPaths keeps only the documents that are published at the reference
+// time, parsing each the same way the indexer does. A file that won't parse is
+// kept so the indexer surfaces the error rather than silently dropping it.
+func publishedPaths(paths []string, now time.Time) []string {
+	keep := make([]string, 0, len(paths))
+	for _, path := range paths {
+		n, err := html.ParseFile(path)
+		if err != nil || files.IsPublished(n, now) {
+			keep = append(keep, path)
+		}
+	}
+	return keep
 }
 
 func init() {
