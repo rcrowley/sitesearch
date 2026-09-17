@@ -1,6 +1,6 @@
 module github.com/rcrowley/sitesearch
 
-go 1.26.5
+go 1.27.0
 
 require (
 	github.com/aws/aws-lambda-go v1.51.0
@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.87.0
 	github.com/aws/smithy-go v1.24.0
 	github.com/blevesearch/bleve/v2 v2.5.6
-	golang.org/x/net v0.57.0
+	golang.org/x/net v0.59.0
 )
 
 require (
@@ -50,10 +50,10 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
-	github.com/rcrowley/mergician v0.0.0-20260728204653-d6bcef79538e // indirect
-	github.com/yuin/goldmark v1.8.5 // indirect
+	github.com/rcrowley/mergician v0.0.0-20260917032638-a79fdeace095 // indirect
+	github.com/yuin/goldmark v1.8.6 // indirect
 	go.etcd.io/bbolt v1.4.3 // indirect
-	golang.org/x/exp v0.0.0-20260727155853-b88d891fe743 // indirect
-	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
+	golang.org/x/sys v0.48.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
